@@ -1,0 +1,25 @@
+# Local aws credentials
+**/*/config/credentials
+**/*/config/*.env
+config/credentials
+config/*.env
+
+**/.
+# Local .terraform directories
+**/.terraform/*
+
+# Local kube_config file
+**/*/.kube/*
+**/*/kubeconfig.yaml
+
+# Local log files
+**/*/result.log
+result.log
+
+.vscode/
+
+# misc
+**/.DS_Store
+.env
+
+data
