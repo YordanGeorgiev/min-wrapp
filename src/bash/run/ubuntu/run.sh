@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # purpose: 
-# the deployment script on ubuntu 20.04 - runs generically the deployment functions 
-# starting with do_ from the src/bash/deploy/ubuntu/ubuntu-20.04.2-lts/*.func.sh files
+# the runnable script on ubuntu 20.04 - runs generically the runnable functions 
+# starting with do_ from the src/bash/run/ubuntu/ubuntu-20.04.2-lts/*.func.sh files
 # 
 
 main(){
@@ -78,7 +78,7 @@ do_run_actions(){
                test "$action_name" == "$arg_action" && run_funcs="$(echo -e "${run_funcs}\n$fnc_name")"
                #debug run_funcs: $run_funcs ; sleep 3
             done< <(get_function_list "$fnc_file")
-         done < <(find "src/bash/deploy/ubuntu/ubuntu-20.04.2-lts" -type f -name '*.func.sh'|sort)
+         done < <(find "src/bash/run/ubuntu/ubuntu-20.04.2-lts" -type f -name '*.func.sh'|sort)
 
       done < <(echo "$actions")
    run_funcs="$(echo -e "${run_funcs}"|sed -e 's/^[[:space:]]*//;/^$/d')"
@@ -153,12 +153,12 @@ do_set_fs_permissions(){
    chmod 700 $PRODUCT_DIR ; sudo chown -R ${USER:-}:${GROUP:-} $PRODUCT_DIR
 
    # User chmod rwx to source dirs.
-   for dir in `echo lib src config`; do
+   for dir in `echo lib src`; do
       chmod -R 0700 $PRODUCT_DIR/$dir ;
    done  ;
 
    # User chmod rwx to sh and py files and rw- to all other files from source dirs.
-   for dir in "$PRODUCT_DIR/config" "$PRODUCT_DIR/lib" "$PRODUCT_DIR/src"; do
+   for dir in "$PRODUCT_DIR/lib" "$PRODUCT_DIR/src"; do
       find $dir -type f -not -path */node_modules/* -not -path */venv/* \
          \( -name '*.*' ! -name '*.sh' ! -name '*.py' \) -exec chmod 600 {} \;
       find $dir -type f -not -path */node_modules/* -not -path */venv/* \
@@ -192,11 +192,11 @@ do_exit(){
    then
       exit_msg=" ERROR --- exit_code $exit_code --- exit_msg : $exit_msg"
       >&2 printf "$exit_msg"
-      do_log "FATAL STOP FOR ${run_unit:-} deployer RUN with: "
+      do_log "FATAL STOP FOR ${run_unit:-} runner RUN with: "
       do_log "FATAL exit_code: $exit_code exit_msg: $exit_msg"
    else
-      do_log "INFO STOP FOR ${run_unit:-} deployer RUN with: "
-      do_log "INFO STOP FOR ${run_unit:-} deployer RUN: $exit_code $exit_msg"
+      do_log "INFO STOP FOR ${run_unit:-} runner RUN with: "
+      do_log "INFO STOP FOR ${run_unit:-} runner RUN: $exit_code $exit_msg"
    fi
 
    exit $exit_code
@@ -205,7 +205,7 @@ do_exit(){
 
 do_load_functions(){
     while read -r f; do source $f; done < <(ls -1 $PRODUCT_DIR/lib/bash/funcs/*.sh)
-    while read -r f; do source $f; done < <(ls -1 $PRODUCT_DIR/src/bash/deploy/ubuntu/$img/*.func.sh)
+    while read -r f; do source $f; done < <(ls -1 $PRODUCT_DIR/src/bash/run/ubuntu/$img/*.func.sh)
  }
 
 main "$@"

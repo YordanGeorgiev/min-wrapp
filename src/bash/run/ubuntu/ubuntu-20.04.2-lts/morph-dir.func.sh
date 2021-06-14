@@ -16,10 +16,10 @@ do_morph_dir(){
 
       # set -x 
 		# some initial checks the users should set the vars in their shells !!!
-		test -z $dir_to_morph && do_exit 1 "You must export dir_to_morph=<<the-dir>> - it is empty !!!"	
+		test -z ${dir_to_morph:-} && do_exit 1 "You must export dir_to_morph=<<the-dir>> - it is empty !!!"	
 		test -d $dir_to_morph || do_exit 1 "The dir to morph : \"$dir_to_morph\" is not a dir !!!"
-		test -z $to_srch && do_exit 1 "You must export to_srch=<<str-to-search-for>> - it is empty !!!"	
-		test -z $to_repl && do_exit 1 "You must export to_repl=<<str-to-replace-with>> - it is empty !!!"	
+		test -z ${to_srch:-} && do_exit 1 "You must export to_srch=<<str-to-search-for>> - it is empty !!!"	
+		test -z ${to_repl:-} && do_exit 1 "You must export to_repl=<<str-to-replace-with>> - it is empty !!!"	
 
 		do_log "INFO dir_to_morph: $dir_to_morph"
 		do_log "INFO to_srch:\"$to_srch\" " ; 

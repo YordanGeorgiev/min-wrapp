@@ -25,12 +25,10 @@ Run an example function ...
 ```bash
 make run
 ```
+
 ## SPAWN !!!
-To spawn this whole thingy into YOUR thingy do:
+To spawn this thingy into YOUR thingy do:
 ```bash
-cp -r ~/opt/min-wrapp ~/opt/thingy
-export to_srch=min-wrapp
-export to_repl=thingy
-export dir_to_morph=~/opt/thingy
-docker exec -it proj-devops-con ./deploy -a do_morph_dir
+export TGT_PROJ=thingy
+make spawn_tgt_project
 ```

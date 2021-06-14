@@ -1,1 +1,1 @@
-src/bash/deploy/ubuntu/run.sh
+./src/bash/deploy/run.sh
