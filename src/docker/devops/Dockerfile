@@ -29,7 +29,7 @@ RUN export DEBIAN_FRONTEND=noninteractive && ln -fs /usr/share/zoneinfo/UTC /etc
    apt-get install -y --no-install-recommends tzdata && \
    dpkg-reconfigure --frontend noninteractive tzdata
 RUN export DEBIAN_FRONTEND=noninteractive && apt-get install -y \
-        lsb-release sudo curl net-tools wget \
+        lsb-release sudo curl net-tools wget bsdmainutils \
         git zip unzip build-essential linux-headers-5.4.0-1037-aws \
         perl make vim ufw jq snapd debconf-utils dialog telnet 
 RUN export DEBIAN_FRONTEND=noninteractive && apt-get clean all && apt-get install --fix-missing

@@ -12,15 +12,18 @@ help: ## @-> show this help  the default action
 
 default: help
 
-install: build_devops_docker_image create_container ## @-> setup the whole environment to run this proj 
+install: do_build_devops_docker_image do_create_container ## @-> setup the whole environment to run this proj 
 
 run: ## @-> run some function , in this case hello world
+	./run -a do_run_hello_world
+
+do_run: ## @-> run some function , in this case hello world
 	docker exec -it proj-devops-con ./run -a do_run_hello_world
 
-build_devops_docker_image: ## @-> build the devops docker image
+do_build_devops_docker_image: ## @-> build the devops docker image
 	docker build . -t proj-devops-img --no-cache --build-arg UID=$(shell id -u) --build-arg GID=$(shell id -g) -f src/docker/devops/Dockerfile
 
-create_container: ## @-> create a new container our of the build img
+do_create_container: ## @-> create a new container our of the build img
 	-docker container stop $$(docker ps -aqf "name=proj-devops-con"); docker container rm $$(docker ps -aqf "name=proj-devops-con")
 	docker run -d -v $$(pwd):/opt/min-wrapp \
    	-v $$HOME/.ssh:/home/ubuntu/.ssh \
