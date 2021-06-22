@@ -1,16 +1,7 @@
-UNAME := $(shell uname)
-ifeq ($(UNAME),Darwin)
-	OS_X   := true
-	SHELL  := /bin/bash
-else
-	OS_DEB := true
-	SHELL  := /bin/bash
-endif
+default: help
 
 help: ## @-> show this help  the default action
 	@fgrep -h "##" $(MAKEFILE_LIST) | fgrep -v fgrep | sed -e 's/\\$$//' | sed -e 's/##//'| column -t -s $$'@'
-
-default: help
 
 install: do_build_devops_docker_image do_create_container ## @-> setup the whole environment to run this proj 
 
@@ -51,3 +42,7 @@ spawn_tgt_project: ensure_is_exported_for_var-TGT_PROJ zip_me ## @-> spawn a new
 	-rm -r $(shell echo $(dir $(abspath $(dir $$PWD)))$$TGT_PROJ)
 	unzip -o ../min-wrapp.zip -d $(shell echo $(dir $(abspath $(dir $$PWD)))$$TGT_PROJ)
 	to_srch=min-wrapp to_repl=$(shell echo $$TGT_PROJ) dir_to_morph=$(shell echo $(dir $(abspath $(dir $$PWD)))$$TGT_PROJ) ./run -a do_morph_dir
+
+do_prune_docker_system: ## @-> stop & completely wipe out all the docker caches for ALL IMAGES !!!
+	-docker kill $$(docker ps -q) ; -docker rm $(docker ps -a -q)
+	docker builder prune -f --all ; docker system prune -f
