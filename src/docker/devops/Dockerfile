@@ -31,7 +31,7 @@ RUN export DEBIAN_FRONTEND=noninteractive && ln -fs /usr/share/zoneinfo/UTC /etc
 RUN export DEBIAN_FRONTEND=noninteractive && apt-get install -y \
         lsb-release sudo curl net-tools wget bsdmainutils \
         git zip unzip build-essential linux-headers-5.4.0-1037-aws \
-        perl make vim ufw jq snapd debconf-utils dialog telnet 
+        perl make vim ufw jq snapd debconf-utils dialog telnet
 RUN export DEBIAN_FRONTEND=noninteractive && apt-get clean all && apt-get install --fix-missing
 
 # Enable host to container edit of proj code on ubuntu and mac.
@@ -44,9 +44,9 @@ RUN adduser \
       --shell "/bin/bash" \
       --home "/home/$USR" \
       --uid $UID \
-      $USR && exit 0 
+      $USR && exit 0
 
-RUN echo "ubuntu:1432@lAFk" | chpasswd
+RUN echo "$USR:1432@lAFk" | chpasswd
 RUN echo "$USR ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 
 USER $USR
@@ -56,7 +56,7 @@ ENV GROUP=$GRP
 USER ubuntu
 ENV USER=ubuntu
 
-ADD --chown=$USR:$GRP "." "/home/ubuntu/$PRODUCT_DIR"
+ADD --chown=$USR:$GRP "." "/home/$USER/$PRODUCT_DIR"
 
 WORKDIR $PRODUCT_DIR
 

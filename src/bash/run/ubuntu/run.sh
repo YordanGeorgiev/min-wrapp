@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-# purpose: 
-# the runnable script on ubuntu 20.04 - runs generically the runnable functions 
+# purpose:
+# the runnable script on ubuntu 20.04 - runs generically the runnable functions
 # starting with do_ from the src/bash/run/ubuntu/ubuntu-20.04.2-lts/*.func.sh files
-# 
+#
 
 main(){
    do_set_vars "$@"  # is inside, unless --help flag is present
@@ -45,7 +45,7 @@ get_function_list () {
 
 
 do_read_cmd_args() {
-   
+
    img=$(lsb_release -d|grep -i ubuntu |perl -ne '$s=lc($_);$s=~s| |-|g;print $s'|awk '{print $2}')
 	while [[ $# -gt 0 ]]; do
 		case "$1" in
@@ -112,7 +112,7 @@ do_flush_screen(){
 do_log(){
    type_of_msg=$(echo $*|cut -d" " -f1)
    msg="$(echo $*|cut -d" " -f2-)"
-   log_dir="${PRODUCT_DIR:-}/data/log/bash" ; mkdir -p $log_dir \
+   log_dir="${PRODUCT_DIR:-}/dat/log/bash" ; mkdir -p $log_dir \
       && log_file="$log_dir/${run_unit:-}.`date "+%Y%m"`.log"
    echo " [$type_of_msg] `date "+%Y-%m-%d %H:%M:%S %Z"` [${run_unit:-}][@${host_name:-}] [$$] $msg " \
       | tee -a $log_file
@@ -168,10 +168,10 @@ do_set_fs_permissions(){
 
 
 do_finalize(){
-   
+
    cat << EOF_INIT_MSG_NO_BOOT
    :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-         $RUN_UNIT run completed 
+         $RUN_UNIT run completed
    :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 EOF_INIT_MSG_NO_BOOT
 }
