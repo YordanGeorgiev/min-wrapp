@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-# purpose: 
-# the runnable script on ubuntu 20.04 - runs generically the runnable functions 
+# purpose:
+# the runnable script on ubuntu 20.04 - runs generically the runnable functions
 # starting with do_ from the src/bash/run/ubuntu/ubuntu-20.04.2-lts/*.func.sh files
-# 
+#
 
 main(){
    do_set_vars "$@"  # is inside, unless --help flag is present
@@ -23,7 +23,7 @@ main_exec(){
       do_run_actions "$actions"
    }
    do_finalize
-   do_exit 0 "deploy ok"
+   do_log "deploy ok" && exit 0
 }
 
 
@@ -45,7 +45,7 @@ get_function_list () {
 
 
 do_read_cmd_args() {
-   
+
    img=$(lsb_release -d|grep -i ubuntu |perl -ne '$s=lc($_);$s=~s| |-|g;print $s'|awk '{print $2}')
 	while [[ $# -gt 0 ]]; do
 		case "$1" in
@@ -112,7 +112,7 @@ do_flush_screen(){
 do_log(){
    type_of_msg=$(echo $*|cut -d" " -f1)
    msg="$(echo $*|cut -d" " -f2-)"
-   log_dir="${PRODUCT_DIR:-}/data/log/bash" ; mkdir -p $log_dir \
+   log_dir="${PRODUCT_DIR:-}/dat/log/bash" ; mkdir -p $log_dir \
       && log_file="$log_dir/${run_unit:-}.`date "+%Y%m"`.log"
    echo " [$type_of_msg] `date "+%Y-%m-%d %H:%M:%S %Z"` [${run_unit:-}][@${host_name:-}] [$$] $msg " \
       | tee -a $log_file
@@ -168,40 +168,13 @@ do_set_fs_permissions(){
 
 
 do_finalize(){
-   
+
    cat << EOF_INIT_MSG_NO_BOOT
    :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-         $RUN_UNIT run completed 
+         $RUN_UNIT run completed
    :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 EOF_INIT_MSG_NO_BOOT
 }
-
-
-
-# ------------------------------------------------------------------------------
-# clean and exit with passed status and message
-# call by:
-# do_exit 0 "ok msg"
-# do_exit 1 "NOK msg"
-# ------------------------------------------------------------------------------
-do_exit(){
-   exit_code=$1 ; shift
-   exit_msg="$*"
-
-   if (( ${exit_code:-} != 0 ));
-   then
-      exit_msg=" ERROR --- exit_code $exit_code --- exit_msg : $exit_msg"
-      >&2 printf "$exit_msg"
-      do_log "FATAL STOP FOR ${run_unit:-} runner RUN with: "
-      do_log "FATAL exit_code: $exit_code exit_msg: $exit_msg"
-   else
-      do_log "INFO STOP FOR ${run_unit:-} runner RUN with: "
-      do_log "INFO STOP FOR ${run_unit:-} runner RUN: $exit_code $exit_msg"
-   fi
-
-   exit $exit_code
-}
-
 
 do_load_functions(){
     while read -r f; do source $f; done < <(ls -1 $PRODUCT_DIR/lib/bash/funcs/*.sh)
