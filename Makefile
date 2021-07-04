@@ -1,8 +1,9 @@
 # Makefile
-
+# usage: run the "make" command in the root, than make <<cmd>> ...
+SHELL = bash
 default: help
 
-.PHONY: help  ## @-> show this help  the default action
+.PHONY: help  ## @-> show this help, the default action
 help:
 	@clear
 	@fgrep -h "##" $(MAKEFILE_LIST)|fgrep -v fgrep|sed -e 's/^\.PHONY: //'|sed -e 's/^\(.*\)##/\1/'|column -t -s $$'@'
@@ -17,7 +18,7 @@ install_no_cache: do_build_devops_docker_image_no_cache do_create_container
 run:
 	./run -a do_run_hello_world
 
-.PHONY: do_run ## @-> run some function , in this case hello world
+.PHONY: do_run ## @-> run some function , in this case hello world via the running docker container
 do_run:
 	docker exec -it proj-con ./run -a do_run_hello_world
 
@@ -34,14 +35,21 @@ do_create_container:
 	-docker container stop $$(docker ps -aqf "name=proj-con"); docker container rm $$(docker ps -aqf "name=proj-con")
 	docker run -d -v $$(pwd):/opt/min-wrapp \
    	-v $$HOME/.ssh:/home/ubuntu/.ssh \
-		--name proj-con proj-img ;
-	@echo -e to attach run: "\ndocker exec -it proj-con /bin/bash"
-	@echo -e to get help run: "\ndocker exec -it proj-con ./run --help"
-	@echo -e to attach run: "\ndocker exec -it proj-con curl https://raw.githubusercontent.com/YordanGeorgiev/ysg-confs/master/src/bash/run/ubuntu/setup-min-shell-utils.sh | bash -s me@org.com"
+		--name proj-con proj-img
+	@echo IMG BUILT, DOCKER STARTED && sleep 1
+	@clear
+	@echo -e \# to attach run to the container run: "\ndocker exec -it proj-con /bin/bash"
+	@echo -e \# to get help run: "\ndocker exec -it proj-con ./run --help"
+	@echo -e \# cp for optional vim \& bash settings: "\ncurl https://raw.githubusercontent.com/YordanGeorgiev/ysg-confs/master/src/bash/deploy/ubuntu/setup-min-shell-utils.sh| bash -s me@org.com"
 
 .PHONY: stop_container ## @-> stop the devops running container
 stop_container:
 	docker container stop $$(docker ps -aqf "name=proj-con"); docker container rm $$(docker ps -aqf "name=proj-con")
+
+.PHONY: do_prune_docker_system ## @-> stop & completely wipe out all the docker caches for ALL IMAGES !!!
+do_prune_docker_system:
+	-docker kill $$(docker ps -q) ; -docker rm $(docker ps -a -q)
+	docker builder prune -f --all ; docker system prune -f
 
 .PHONY: zip_me ## @-> zip the whole project without the .git dir
 zip_me:
@@ -63,8 +71,3 @@ spawn_tgt_project: demand_var-TGT_PROJ zip_me
 	-rm -r $(shell echo $(dir $(abspath $(dir $$PWD)))$$TGT_PROJ)
 	unzip -o ../min-wrapp.zip -d $(shell echo $(dir $(abspath $(dir $$PWD)))$$TGT_PROJ)
 	to_srch=min-wrapp to_repl=$(shell echo $$TGT_PROJ) dir_to_morph=$(shell echo $(dir $(abspath $(dir $$PWD)))$$TGT_PROJ) ./run -a do_morph_dir
-
-.PHONY: do_prune_docker_system ## @-> stop & completely wipe out all the docker caches for ALL IMAGES !!!
-do_prune_docker_system:
-	-docker kill $$(docker ps -q) ; -docker rm $(docker ps -a -q)
-	docker builder prune -f --all ; docker system prune -f
