@@ -1,9 +1,9 @@
-# Makefile 
+# Makefile
 
 default: help
 
 .PHONY: help  ## @-> show this help  the default action
-help: 
+help:
 	@clear
 	@fgrep -h "##" $(MAKEFILE_LIST)|fgrep -v fgrep|sed -e 's/^\.PHONY: //'|sed -e 's/^\(.*\)##/\1/'|column -t -s $$'@'
 
@@ -47,17 +47,19 @@ stop_container:
 zip_me:
 	-rm -v ../min-wrapp.zip ; zip -r ../min-wrapp.zip  . -x '*.git*'
 
-ensure_is_exported_for_var-%:
+demand_var-%:
 	@if [ "${${*}}" = "" ]; then \
 		echo "the var \"$*\" is not set, do set it by: export $*='value'"; \
 		exit 1; \
 	fi
 
-task-which-requires-a-var: ensure_is_exported_for_var-ENV_TYPE
-	@echo ${ENV_TYPE}
+.PHONY: task-which-requires-a-var ## @-> test shell variable is set enforcemnt
+task-which-requires-a-var: demand_var-ENV_TYPE
+	@clear
+	@echo the required variable ENV_TYPE\'s value was: ${ENV_TYPE}
 
 .PHONY: spawn_tgt_project ## @-> spawn a new target project
-spawn_tgt_project: ensure_is_exported_for_var-TGT_PROJ zip_me
+spawn_tgt_project: demand_var-TGT_PROJ zip_me
 	-rm -r $(shell echo $(dir $(abspath $(dir $$PWD)))$$TGT_PROJ)
 	unzip -o ../min-wrapp.zip -d $(shell echo $(dir $(abspath $(dir $$PWD)))$$TGT_PROJ)
 	to_srch=min-wrapp to_repl=$(shell echo $$TGT_PROJ) dir_to_morph=$(shell echo $(dir $(abspath $(dir $$PWD)))$$TGT_PROJ) ./run -a do_morph_dir

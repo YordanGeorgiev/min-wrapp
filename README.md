@@ -29,6 +29,5 @@ make run
 ## SPAWN !!!
 To spawn this thingy into YOUR thingy do:
 ```bash
-export TGT_PROJ=thingy
-make spawn_tgt_project
+TGT_PROJ=thingy make spawn_tgt_project
 ```
