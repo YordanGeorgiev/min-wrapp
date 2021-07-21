@@ -1,6 +1,6 @@
 # usage:
 # source lib/bash/funcs/sync-time.func.sh && do_sync_time
-do_sync_time(){
+do_ubuntu_sync_time(){
 
       sudo netplan apply
       sudo systemctl unmask systemd-timedated.service

@@ -5,14 +5,17 @@ ARG GID
 
 ENV PRODUCT_NAME="min-wrapp"
 ENV PRODUCT_DIR="/opt/min-wrapp"
-ENV USR="ubuntu"
-ENV GRP="ubuntu"
+ENV USER="ubuntu"
+ENV GROUP="ubuntu"
 ENV TERM="xterm-256color"
 ENV TZ="Etc/UTC"
 VOLUME $PRODUCT_DIR
 
 ENV TERM="xterm-256color"
+ENV PS1="`date \"+%F %T\"` \u@\h  \w \n\n  "
 ENV TZ="Etc/UTC"
+ENV USER=ubuntu
+ENV GROUP=ubuntu
 
 RUN echo \n\
 XKBMODEL="pc105" \n\
@@ -38,25 +41,21 @@ RUN export DEBIAN_FRONTEND=noninteractive && apt-get clean all && apt-get instal
 RUN test -z $(getent group $GID | cut -d: -f1) || \
       groupmod -g $((GID+1000)) $(getent group $GID | cut -d: -f1)
 
-RUN addgroup --gid $GID $GRP
+RUN addgroup --gid $GID $GROUP
 RUN adduser \
       --gid $GID \
       --shell "/bin/bash" \
-      --home "/home/$USR" \
+      --home "/home/$USER" \
       --uid $UID \
-      $USR && exit 0
+      $USER && exit 0
 
-RUN echo "$USR:1432@lAFk" | chpasswd
-RUN echo "$USR ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+RUN echo "$USER:1432@lAFk" | chpasswd
+RUN echo "$USER ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 
-USER $USR
-ENV USER=$USR
-ENV GROUP=$GRP
+USER $USER
 
-USER ubuntu
-ENV USER=ubuntu
 
-ADD --chown=$USR:$GRP "." "/home/$USER/$PRODUCT_DIR"
+ADD --chown=$USER:$GROUP "." "/home/$USER/$PRODUCT_DIR"
 
 WORKDIR $PRODUCT_DIR
 
